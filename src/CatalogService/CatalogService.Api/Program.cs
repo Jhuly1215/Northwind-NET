@@ -15,16 +15,12 @@ var conn = builder.Configuration.GetConnectionString("Northwind");
 if (string.IsNullOrWhiteSpace(conn))
     throw new InvalidOperationException("Missing connection string 'ConnectionStrings:Northwind'.");
 
-// EF Core MySQL (recomendado Pomelo)
 builder.Services.AddDbContextPool<NorthwindDbContext>(opt =>
 {
-    // IMPORTANTE: ServerVersion.AutoDetect(conn) a veces falla al arrancar con Docker si MySQL no está listo.
-    // Mejor fija la versión si quieres 0 drama:
     var serverVersion = new MySqlServerVersion(new Version(8, 0, 0));
 
     opt.UseMySql(conn, serverVersion, mysql =>
     {
-        // reintentos si MySQL tarda en estar disponible
         mysql.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(10),
@@ -32,12 +28,12 @@ builder.Services.AddDbContextPool<NorthwindDbContext>(opt =>
         );
     });
 
-    // opcional: logs en dev
+    // logs en dev
     if (builder.Environment.IsDevelopment())
         opt.EnableSensitiveDataLogging();
 });
 
-// Health checks (mínimo)
+// Health checks
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<NorthwindDbContext>("db");
 

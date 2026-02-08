@@ -21,7 +21,7 @@ builder.Services
     .AddApiExplorer(o =>
     {
         o.GroupNameFormat = "'v'V";          // v1, v2
-        o.SubstituteApiVersionInUrl = true; // reemplaza {version:apiVersion}
+        o.SubstituteApiVersionInUrl = true;
     });
 
 builder.Services.AddEndpointsApiExplorer();

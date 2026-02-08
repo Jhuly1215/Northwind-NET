@@ -27,11 +27,9 @@ public class OrdersController : ControllerBase
 
         var q = _db.orders.AsNoTracking();
 
-        // OJO: usamos EF.Property<int?> para evitar crash si customer_id viene NULL en DB
         if (customerId.HasValue)
             q = q.Where(o => EF.Property<int?>(o, "customer_id") == customerId.Value);
 
-        // Igual para status_id
         if (statusId.HasValue)
             q = q.Where(o => EF.Property<sbyte?>(o, "status_id") == statusId.Value);
 
@@ -49,13 +47,9 @@ public class OrdersController : ControllerBase
                 customer_id = EF.Property<int?>(o, "customer_id"),
                 customer_company = c != null ? c.company : null,
 
-                // NULL-safe aunque tu entity tenga DateTime no-nullable
                 order_date = EF.Property<DateTime?>(o, "order_date"),
-
-                // NULL-safe
                 status_id = EF.Property<sbyte?>(o, "status_id"),
 
-                // Total NULL-safe incluso si no hay detalles (SUM en SQL retorna NULL)
                 total =
                     _db.order_details
                         .Where(d => d.order_id == o.id)
