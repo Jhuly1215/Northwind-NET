@@ -1,0 +1,95 @@
+# =========================
+# .NET / Visual Studio
+# =========================
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.cache
+*.log
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Visual Studio Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/settings.json
+
+# =========================
+# Build / publish artifacts
+# =========================
+**/artifacts/
+**/publish/
+**/*.nupkg
+**/*.snupkg
+
+# =========================
+# OS junk
+# =========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# UserSecrets (si usas dotnet user-secrets)
+**/secrets.json
+**/*secrets*.json
+
+# Certificates (dev https)
+**/*.pfx
+
+# =========================
+# Docker
+# =========================
+docker-compose.override.yml
+
+# =========================
+# Node (si algún microservicio lo usa)
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Coverage / testing
+# =========================
+TestResults/
+coverage/
+coverage.*
+*.trx
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+
+# =========================
+# Database local dumps
+# =========================
+*.sql.bak
+*.dump
+*.dmp
+
+# =========================
+# Misc
+# =========================
+*.swp
+*.tmp

@@ -1,0 +1,65 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-northwind
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./infra/northwind-infra/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "${ADMINER_PORT}:8080"
+
+  catalog-api:
+    build:
+      context: ./src/CatalogService/CatalogService.Api
+      target: dev
+    container_name: catalog-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+      ConnectionStrings__Northwind: "Server=mysql;Port=3306;Database=${MYSQL_DATABASE};User=${MYSQL_USER};Password=${MYSQL_PASSWORD};SslMode=none;AllowPublicKeyRetrieval=True;"
+    ports:
+      - "${CATALOG_API_PORT}:8080"
+    volumes:
+      - ./src/CatalogService/CatalogService.Api:/src
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  orders-api:
+    build:
+      context: ./src/OrdersService/OrdersService.Api
+      target: dev
+    container_name: orders-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+      ConnectionStrings__Northwind: "Server=mysql;Port=3306;Database=${MYSQL_DATABASE};User=${MYSQL_USER};Password=${MYSQL_PASSWORD};SslMode=none;AllowPublicKeyRetrieval=True;"
+    ports:
+      - "${ORDERS_API_PORT}:8080"
+    volumes:
+      - ./src/OrdersService/OrdersService.Api:/src
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
